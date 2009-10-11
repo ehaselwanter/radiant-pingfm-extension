@@ -10,23 +10,23 @@ module PingfmNotification
     if parent
       if published? && pingfm_configured? && parent.notify_pingfm_of_children? && !self.already_notified_pingfm
         message = Hash.new
-        message[:body] = "(#{absolute_url}) #{title} #{"@t "+ self.meta_tags.map(&:name).join(', ') if self.respond_to?(:meta_tags)}"
+        message[:body] = "(#{absolute_url}) #{title} #{"@t "+ self.meta_tags.collect{|tag| tag.name}.join(", ") if self.respond_to?(:meta_tags)}"
         logger.info "posted  #{message[:body]} to ping.fm"
         message[:debug] = 0
 
         begin
           client = Pingfm::Client.new(config['pingfm.application_api_key'],config['pingfm.api_key'])
           #post(body, title = '', post_method = 'default', service = '', debug = 0)
-          status = client.post(message[:body],'','default','',1)
+          status = client.post(message[:body],'','default','',message[:debug])
           # Don't trigger save callbacks
           if status['status'].eql?("OK")
             self.class.update_all({:already_notified_pingfm => true}, :id => self.id)
           else
-            logger.error("Ping.fm Notification failure: #{status['message']}")
+            logger.error("Ping.fm Notification failure: #{status['message']} application_api_key:'#{config['pingfm.application_api_key']}' api_key:'#{config['pingfm.api_key']}'")
           end
         rescue Exception => e
           # Pingfm failed... just log for now
-          logger.error "Ping.fm Notification failure: #{e.inspect}"
+          logger.error "Ping.fm Notification exception #{e.inspect} application_api_key:'#{config['pingfm.application_api_key']}' api_key:'#{config['pingfm.api_key']}'"
         end
       end
     end
