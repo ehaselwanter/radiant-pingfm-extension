@@ -15,7 +15,7 @@ module PingfmNotification
         message[:debug] = 0
 
         begin
-          client = Pingfm::Client.new(config['pingfm.application_api_key'],config['pingfm.api_key'])
+          client = Pingfm::Client.new(config['pingfm.application_api_key'].strip,config['pingfm.api_key'].strip)
           #post(body, title = '', post_method = 'default', service = '', debug = 0)
           status = client.post(message[:body],'','default','',message[:debug])
           # Don't trigger save callbacks
