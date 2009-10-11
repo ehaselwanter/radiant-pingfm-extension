@@ -1,0 +1,33 @@
+%h1 Edit Pingfm Notification settings
+
+- form_tag pingfm_path do
+  %p
+    %label{:for => 'api_key'} API Key
+    = text_field_tag 'api_key', @config['pingfm.api_key'], :size => 30
+  %p
+    %label{:for => 'application_api_key'} Application API Key
+    = password_field_tag 'application_api_key', @config['pingfm.application_api_key'], :size => 30
+  %p
+    %label{:for => 'url_host'} Base URL or host
+    = text_field_tag 'url_host', (@config['pingfm.url_host'] || request.host), :size => 30
+  %p.buttons
+    = submit_tag 'Save settings'
+  
+- content_for :page_css do
+  :sass
+    form
+      margin: 10px
+      width: 400px
+      padding: 10px
+      background-color: #f8f8f8
+      border: 1px solid #e8e8e8
+    form p
+      margin-bottom: 10px
+    label
+      float: left
+      width: 150px
+      padding-right: 1em
+      font-weight: bold
+      text-align: right
+    p.buttons
+      text-align: right
