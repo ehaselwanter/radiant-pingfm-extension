@@ -11,7 +11,7 @@ module PingfmNotification
       if published? && pingfm_configured? && parent.notify_pingfm_of_children? && !self.already_notified_pingfm
         message = Hash.new
         message[:body] = "(#{absolute_url}) #{title} #{"@t "+ self.meta_tags.map(&:name).join(', ') if self.respond_to?(:meta_tags)}"
-        logger.debug message[:body]
+        logger.info "posted  #{message[:body]} to ping.fm"
         message[:debug] = 0
 
         begin

@@ -2,6 +2,8 @@
   %th.label
     Pingfm
   %td
-    = check_box 'page', 'notify_pingfm_of_children'
-    %label{:for => "page_notify_pingfm_of_children"} Notify Ping.fm of newly published child pages?
+    - notify_value = 0
+    - notify_value = @page.notify_pingfm_of_children rescue {}
+    = check_box_tag "page['notify_pingfm_of_children']", notify_value
+    %label{:for => "page_notify_pingfm_of_children"} Notify Ping.fm of not already announced pages?
     = link_to "Ping.fm Recent Posts", "http://ping.fm/recent/"
