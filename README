@@ -1,3 +1,25 @@
 = Pingfm
 
-Description goes here
+Send updates to your Ping.fm account.
+
+See HELP_admin.md
+
+= Installing
+
+gem install pingfm # sudo gem install pingfm
+cd /path/to/radiant-installation/
+
+git clone git://github.com/ehaselwanter/radiant-pingfm-extension.git vendor/extensions/pingfm
+
+or
+
+git submodule add git://github.com/ehaselwanter/radiant-pingfm-extension.git vendor/extensions/pingfm
+
+git submodule init
+git submodule update
+
+rake db:migrate:extensions
+
+Then go edit the config/environment.rb and set the Radian::Config options
+as needed (See HELP_admin.md).  For details on how to do this see:
+http://wiki.github.com/radiant/radiant/additional-configuration-options
