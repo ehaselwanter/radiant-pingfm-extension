@@ -24,9 +24,8 @@ module PingfmNotification
           #post(body, title = '', post_method = 'default', service = '', debug = 0)
           status_status = client.tpost(message[:status_body],'status','',message[:debug])
           blog_status =  client.tpost(message[:blog_body],'blogs',message[:blog_title],message[:debug])
-          status = status_status && blog_status
           # Don't trigger save callbacks
-          if status['status'].eql?("OK")
+          if status_status['status'].eql?("OK") || blog_status['status'].eql?("OK")
             self.class.update_all({:already_notified_pingfm => true}, :id => self.id) unless message[:debug]
             logger.debug "posted  #{message[:blog_title]} to ping.fm"
           else
