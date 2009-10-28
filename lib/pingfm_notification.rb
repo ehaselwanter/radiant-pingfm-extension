@@ -10,17 +10,25 @@ module PingfmNotification
     if parent
       if published? && pingfm_configured? && parent.notify_pingfm_of_children? && !self.already_notified_pingfm
         message = Hash.new
-        message[:body] = "(#{absolute_url}) #{title} #{"@t "+ self.meta_tags.collect{|tag| tag.name}.join(", ") if self.respond_to?(:meta_tags)}"
-        logger.info "posted  #{message[:body]} to ping.fm"
+        message[:status_body] = "(#{absolute_url}) #{title} #{"@t "+ self.meta_tags.collect{|tag| tag.name}.join(", ") if self.respond_to?(:meta_tags)}"
+        message[:blog_title] = title
+        message[:blog_body] = "#{render_part(:body)} </br> <a href='#{absolute_url}'>readmore</a> #{"@t "+ self.meta_tags.collect{|tag| tag.name}.join(", ") if self.respond_to?(:meta_tags)}"
+
+        logger.debug "posting  #{message[:status_body]} to ping.fm"
+        logger.debug "posting  #{message[:blog_body]} to ping.fm"
+
         message[:debug] = 0
 
         begin
           client = Pingfm::Client.new(config['pingfm.application_api_key'].strip,config['pingfm.api_key'].strip)
           #post(body, title = '', post_method = 'default', service = '', debug = 0)
-          status = client.post(message[:body],'','default','',message[:debug])
+          status_status = client.tpost(message[:status_body],'status','',message[:debug])
+          blog_status =  client.tpost(message[:blog_body],'blogs',message[:blog_title],message[:debug])
+          status = status_status && blog_status
           # Don't trigger save callbacks
           if status['status'].eql?("OK")
-            self.class.update_all({:already_notified_pingfm => true}, :id => self.id)
+            self.class.update_all({:already_notified_pingfm => true}, :id => self.id) unless message[:debug]
+            logger.debug "posted  #{message[:blog_title]} to ping.fm"
           else
             logger.error("Ping.fm Notification failure: #{status['message']} application_api_key:'#{config['pingfm.application_api_key']}' api_key:'#{config['pingfm.api_key']}'")
           end
