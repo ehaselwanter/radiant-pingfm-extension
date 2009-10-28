@@ -26,7 +26,7 @@ module PingfmNotification
           blog_status =  client.tpost(message[:blog_body],'blogs',message[:blog_title],message[:debug])
           # Don't trigger save callbacks
           if status_status['status'].eql?("OK") || blog_status['status'].eql?("OK")
-            self.class.update_all({:already_notified_pingfm => true}, :id => self.id) unless message[:debug]
+            self.class.update_all({:already_notified_pingfm => true}, :id => self.id)
             logger.debug "posted  #{message[:blog_title]} to ping.fm"
           else
             logger.error("Ping.fm Notification failure: #{status['message']} application_api_key:'#{config['pingfm.application_api_key']}' api_key:'#{config['pingfm.api_key']}'")
